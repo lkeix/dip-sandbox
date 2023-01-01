@@ -5,9 +5,9 @@ import (
 )
 
 type User interface {
-	Users()                 // fetch all users
-	UserByID(int)           // fetch user by id
-	Update(int, model.User) // update user info by id
-	Create(model.User)      // create new user
-	Delete(int)
+	Users() []model.User               // fetch all users
+	UserByID(int) (*model.User, error) // fetch user by id
+	Update(*model.User) error          // update user info by id
+	Create(*model.User) error          // create new user
+	Delete(int) error
 }
