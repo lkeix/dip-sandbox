@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/lkeix/dip-sandbox/domain/model"
+	"github.com/lkeix/dip-sandbox/entity"
 	"github.com/lkeix/dip-sandbox/infrastructure"
 )
 
@@ -23,20 +23,20 @@ func main() {
 }
 
 func setup(adapter infrastructure.User) {
-	users := []*model.User{
-		&model.User{
+	users := []*entity.User{
+		&entity.User{
 			ID:      1,
 			Name:    "hoge",
 			Mail:    "hoge@hoge.hoge",
 			Address: "hogehoge",
 		},
-		&model.User{
+		&entity.User{
 			ID:      2,
 			Name:    "fuga",
 			Mail:    "fuga@fuga.fuga",
 			Address: "fugafuga",
 		},
-		&model.User{
+		&entity.User{
 			ID:      3,
 			Name:    "piyo",
 			Mail:    "piyo@piyo.piyo",

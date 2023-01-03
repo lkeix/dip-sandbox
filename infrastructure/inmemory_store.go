@@ -4,29 +4,29 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/lkeix/dip-sandbox/domain/model"
+	"github.com/lkeix/dip-sandbox/entity"
 )
 
 type inMemoryUserAdapter struct {
-	users map[int]*model.User
+	users map[int]*entity.User
 	Mux   sync.RWMutex
 }
 
 type User interface {
-	Users() []*model.User              // fetch all users
-	UserByID(int) (*model.User, error) // fetch user by id
-	Create(*model.User) error          // create new user
+	Users() []*entity.User              // fetch all users
+	UserByID(int) (*entity.User, error) // fetch user by id
+	Create(*entity.User) error          // create new user
 }
 
 func NewInmemoryUserAdapter() User {
 	return &inMemoryUserAdapter{
-		users: make(map[int]*model.User),
+		users: make(map[int]*entity.User),
 		Mux:   sync.RWMutex{},
 	}
 }
 
-func (i *inMemoryUserAdapter) Users() []*model.User {
-	var users []*model.User
+func (i *inMemoryUserAdapter) Users() []*entity.User {
+	var users []*entity.User
 
 	i.Mux.RLock()
 	for _, user := range i.users {
@@ -37,7 +37,7 @@ func (i *inMemoryUserAdapter) Users() []*model.User {
 	return users
 }
 
-func (i *inMemoryUserAdapter) UserByID(id int) (*model.User, error) {
+func (i *inMemoryUserAdapter) UserByID(id int) (*entity.User, error) {
 	i.Mux.RLock()
 	defer i.Mux.RUnlock()
 
@@ -50,7 +50,7 @@ func (i *inMemoryUserAdapter) UserByID(id int) (*model.User, error) {
 	return user, nil
 }
 
-func (i *inMemoryUserAdapter) Create(user *model.User) error {
+func (i *inMemoryUserAdapter) Create(user *entity.User) error {
 	i.Mux.Lock()
 	defer i.Mux.Unlock()
 	_, ok := i.users[int(user.ID)]
