@@ -13,6 +13,10 @@ func main() {
 
 	user, _ := store.UserByID(1)
 	fmt.Println(user)
+
+	for _, u := range store.Users {
+		fmt.Println(u)
+	}
 }
 
 func setup(store *infrastructure.InMemoryUserStore) {
