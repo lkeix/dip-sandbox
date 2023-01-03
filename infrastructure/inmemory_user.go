@@ -5,36 +5,41 @@ import (
 	"sync"
 
 	"github.com/lkeix/dip-sandbox/domain/model"
-	"github.com/lkeix/dip-sandbox/domain/repository"
 )
 
 type inMemoryUserAdapter struct {
 	users map[int]*model.User
-	mux   sync.RWMutex
+	Mux   sync.RWMutex
 }
 
-func NewInmemoryUserAdapter() repository.User {
+type User interface {
+	Users() []*model.User              // fetch all users
+	UserByID(int) (*model.User, error) // fetch user by id
+	Create(*model.User) error          // create new user
+}
+
+func NewInmemoryUserAdapter() User {
 	return &inMemoryUserAdapter{
 		users: make(map[int]*model.User),
-		mux:   sync.RWMutex{},
+		Mux:   sync.RWMutex{},
 	}
 }
 
-func (i *inMemoryUserAdapter) Users() []model.User {
-	var users []model.User
+func (i *inMemoryUserAdapter) Users() []*model.User {
+	var users []*model.User
 
-	i.mux.RLock()
+	i.Mux.RLock()
 	for _, user := range i.users {
-		users = append(users, *user)
+		users = append(users, user)
 	}
-	i.mux.Unlock()
+	i.Mux.Unlock()
 
 	return users
 }
 
 func (i *inMemoryUserAdapter) UserByID(id int) (*model.User, error) {
-	i.mux.RLock()
-	defer i.mux.RUnlock()
+	i.Mux.RLock()
+	defer i.Mux.RUnlock()
 
 	user, ok := i.users[id]
 
@@ -45,42 +50,14 @@ func (i *inMemoryUserAdapter) UserByID(id int) (*model.User, error) {
 	return user, nil
 }
 
-func (i *inMemoryUserAdapter) Update(user *model.User) error {
-	i.mux.Lock()
-	defer i.mux.Unlock()
-	_, ok := i.users[int(user.ID)]
-
-	if !ok {
-		return errors.New("user doesn't exist")
-	}
-
-	i.users[int(user.ID)] = user
-
-	return nil
-}
-
 func (i *inMemoryUserAdapter) Create(user *model.User) error {
-	i.mux.Lock()
-	defer i.mux.Unlock()
+	i.Mux.Lock()
+	defer i.Mux.Unlock()
 	_, ok := i.users[int(user.ID)]
 	if ok {
 		return errors.New("user already exist")
 	}
 
 	i.users[int(user.ID)] = user
-	return nil
-}
-
-func (i *inMemoryUserAdapter) Delete(id int) error {
-	i.mux.Lock()
-	defer i.mux.Unlock()
-	_, ok := i.users[id]
-
-	if !ok {
-		return errors.New("user doesn't exist")
-	}
-
-	delete(i.users, id)
-
 	return nil
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/lkeix/dip-sandbox/domain/model"
-	"github.com/lkeix/dip-sandbox/domain/repository"
 	"github.com/lkeix/dip-sandbox/infrastructure"
 )
 
@@ -12,16 +11,18 @@ func main() {
 	inmemoryAdapter := infrastructure.NewInmemoryUserAdapter()
 	setup(inmemoryAdapter)
 
-	userID1, err := inmemoryAdapter.UserByID(1)
+	user, _ := inmemoryAdapter.UserByID(1)
 
-	if err != nil {
-		panic(err)
+	fmt.Println(user)
+
+	users := inmemoryAdapter.Users()
+
+	for _, u := range users {
+		fmt.Println(u)
 	}
-
-	fmt.Println(userID1)
 }
 
-func setup(adapter repository.User) {
+func setup(adapter infrastructure.User) {
 	users := []*model.User{
 		&model.User{
 			ID:      1,
