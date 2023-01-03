@@ -32,7 +32,7 @@ func (i *inMemoryUserAdapter) Users() []*entity.User {
 	for _, user := range i.users {
 		users = append(users, user)
 	}
-	i.Mux.Unlock()
+	i.Mux.RUnlock()
 
 	return users
 }
